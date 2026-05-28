@@ -1,83 +1,59 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
-import { Menu, X } from "lucide-react"
 import { ThemeToggle } from "./ThemeToggle"
 
+const navItems = [
+  { label: "Work", href: "#work" },
+  { label: "About", href: "#about" },
+  { label: "Stack", href: "#stack" },
+  { label: "Contact", href: "#contact" },
+]
+
 export function Navigation() {
-  const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
   }, [])
-
-  const navItems = [
-    { label: "Home", href: "#home" },
-    { label: "About", href: "#about" },
-    { label: "Projects", href: "#projects" },
-    { label: "Skills", href: "#skills" },
-    { label: "Contact", href: "#contact" },
-  ]
 
   return (
     <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? "glass shadow-lg" : "bg-transparent"
+      className={`fixed top-0 inset-x-0 z-50 transition-colors duration-300 ${
+        scrolled
+          ? "bg-background/85 backdrop-blur-md border-b hairline"
+          : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+      <div className="max-w-6xl mx-auto px-6 lg:px-10">
+        <div className="flex items-center justify-between h-16">
           <Link
-            href="#home"
-            className="text-2xl font-bold bg-linear-to-r from-primary to-accent bg-clip-text text-transparent"
+            href="#top"
+            className="font-serif text-xl tracking-tight hover:opacity-70 transition-opacity"
           >
-            Chukwudi
+            Chudi Ofoma
           </Link>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex gap-8">
-            {navItems.map((item) => (
-              <a key={item.href} href={item.href} className="text-sm font-medium hover:text-primary transition-colors">
-                {item.label}
-              </a>
-            ))}
-          </div>
-
-          {/* Theme toggle + Desktop Menu extras */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="flex items-center gap-1 sm:gap-2">
+            <ul className="hidden sm:flex items-center gap-1 mr-2">
+              {navItems.map((item) => (
+                <li key={item.href}>
+                  <a
+                    href={item.href}
+                    className="text-sm px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
             <ThemeToggle />
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="flex items-center gap-2 md:hidden">
-            <ThemeToggle />
-            <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
           </div>
         </div>
-
-        {/* Mobile Menu */}
-        {isOpen && (
-          <div className="md:hidden pb-4 space-y-2">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="block px-4 py-2 hover:bg-primary/10 rounded-lg transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                {item.label}
-              </a>
-            ))}
-          </div>
-        )}
       </div>
     </nav>
   )

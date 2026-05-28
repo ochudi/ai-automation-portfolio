@@ -1,11 +1,13 @@
+import Link from "next/link"
+import { notFound } from "next/navigation"
+import { ArrowLeft, ArrowUpRight } from "lucide-react"
 import { getProjectBySlug, projects } from "@/lib/projects"
 import { getProjectMedia } from "@/lib/project-media.server"
 import { ProjectPlayer } from "@/components/ProjectPlayer"
 import { ProjectGallery } from "@/components/ProjectGallery"
-import { ProjectDebugClient } from "@/components/ProjectDebugClient"
 
 interface Props {
-  params: { slug: string }
+  params: Promise<{ slug: string }> | { slug: string }
 }
 
 export async function generateStaticParams() {
@@ -13,112 +15,130 @@ export async function generateStaticParams() {
 }
 
 export default async function ProjectPage({ params }: Props) {
-  // Next may provide params as a Promise in some versions/configs; unwrap safely
-  // await params to ensure we have the actual object
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const resolvedParams = (await (params as any)) as { slug: string }
-  const slug = resolvedParams?.slug
-
+  const { slug } = await Promise.resolve(params as { slug: string })
   const project = getProjectBySlug(slug)
+
+  if (!project) notFound()
+
   const media = getProjectMedia(slug)
-  // prefer explicit project.video (external embed) else use first local video found in public/projects/{slug}
-  const demoSrc = project?.video || (media && (media as any).videos && (media as any).videos[0]) || ""
-
-  if (!project) {
-    return (
-      <main className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Project not found</h1>
-          <p className="mt-4 text-sm text-muted-foreground">Requested slug: <code className="bg-black/5 px-2 py-1 rounded">{String(slug)}</code></p>
-          <p className="mt-2 text-sm text-muted-foreground">Decoded: <code className="bg-black/5 px-2 py-1 rounded">{slug ? decodeURIComponent(String(slug)) : ""}</code></p>
-          <div className="mt-4 text-left">
-            <p className="font-semibold mb-2">Available slugs</p>
-            <ul className="list-disc pl-5 text-sm">
-              {projects.map((p) => (
-                <li key={p.slug}>
-                  <a href={`/projects/${p.slug}`} className="text-primary underline">
-                    {p.slug}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="mt-6 text-left text-sm">
-            <p className="font-semibold">Server params object</p>
-            <pre className="bg-black/5 p-2 rounded">{JSON.stringify(resolvedParams ?? params, null, 2)}</pre>
-          </div>
-
-          {/* client debug: show browser URL */}
-          <div className="mt-6">
-            {/* lazy load client debug to avoid hydration mismatch */}
-            <script dangerouslySetInnerHTML={{ __html: "" }} />
-            {/* @ts-ignore */}
-            <ProjectDebugClient />
-          </div>
-        </div>
-      </main>
-    )
-  }
+  const demoSrc =
+    project.video ||
+    (media && (media as { videos?: string[] }).videos?.[0]) ||
+    ""
 
   return (
-    <main className="min-h-screen py-16">
-      <div className="max-w-4xl mx-auto px-4">
-        <a href="/" className="text-sm text-muted-foreground underline mb-4 inline-block">
-          ← Back
-        </a>
+    <main className="min-h-screen px-6 lg:px-10 py-12 sm:py-20">
+      <article className="max-w-4xl mx-auto">
+        <Link
+          href="/#work"
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-12"
+        >
+          <ArrowLeft size={14} />
+          Back to work
+        </Link>
 
-        <h1 className="text-4xl font-bold mb-4">{project.title}</h1>
-        <p className="text-lg text-muted-foreground mb-6">{project.description}</p>
+        <header className="border-b hairline pb-10 mb-12">
+          <p className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground mb-6">
+            Case study {project.year ? `· ${project.year}` : ""}
+          </p>
+          <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl leading-[0.95] tracking-tight">
+            {project.title}
+          </h1>
+          {project.metric && (
+            <p className="mt-8 font-serif italic text-2xl sm:text-3xl text-muted-foreground">
+              {project.metric}
+            </p>
+          )}
+        </header>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <div className="md:col-span-2">
-            <h2 className="text-2xl font-semibold mb-3">About</h2>
-            <p className="leading-relaxed mb-6">{project.content}</p>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+          <div className="lg:col-span-8 space-y-10">
+            <section>
+              <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground mb-4">
+                Overview
+              </h2>
+              <p className="text-lg leading-relaxed">{project.description}</p>
+              {project.content && (
+                <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+                  {project.content}
+                </p>
+              )}
+            </section>
 
-            <h3 className="font-semibold mb-2">Tools & Technologies</h3>
-            <div className="flex flex-wrap gap-2 mb-6">
-              {project.tools.map((t) => (
-                <span key={t} className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                  {t}
-                </span>
-              ))}
-            </div>
-
-            <h3 className="font-semibold mb-2">Screenshots</h3>
-            <div className="mb-6">
-              {/* ProjectGallery is a client component that handles thumbnails and modal */}
-              <ProjectGallery images={media.images} />
-            </div>
+            {media.images && media.images.length > 0 && (
+              <section>
+                <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground mb-4">
+                  Screenshots
+                </h2>
+                <ProjectGallery images={media.images} />
+              </section>
+            )}
 
             {media.docs && media.docs.length > 0 && (
-              <div className="mb-6">
-                <h3 className="font-semibold mb-2">Documentation</h3>
-                <ul className="list-disc pl-5">
+              <section>
+                <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground mb-4">
+                  Documentation
+                </h2>
+                <ul className="space-y-2">
                   {media.docs.map((d) => (
                     <li key={d}>
-                      <a href={d} target="_blank" rel="noreferrer" className="text-primary underline">
+                      <a
+                        href={d}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-2 text-foreground hover:text-accent transition-colors"
+                      >
                         {d.split("/").pop()}
+                        <ArrowUpRight size={14} />
                       </a>
                     </li>
                   ))}
                 </ul>
+              </section>
+            )}
+          </div>
+
+          <aside className="lg:col-span-4 space-y-8 lg:border-l hairline lg:pl-10">
+            <div>
+              <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground mb-3">
+                Stack
+              </h2>
+              <ul className="flex flex-wrap gap-1.5">
+                {project.tools.map((t) => (
+                  <li
+                    key={t}
+                    className="font-mono text-[10px] uppercase tracking-wider px-2 py-1 border hairline rounded-full text-muted-foreground"
+                  >
+                    {t}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {demoSrc && (
+              <div>
+                <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground mb-3">
+                  Demo
+                </h2>
+                <ProjectPlayer src={demoSrc} title={project.title} />
               </div>
             )}
-          </div>
-
-          <div>
-            <h3 className="font-semibold mb-2">Demo</h3>
-            <ProjectPlayer src={demoSrc} title={project.title} />
-
-            {demoSrc ? (
-              <p className="text-sm text-muted-foreground mt-3">You can load the demo above or open it in a new tab.</p>
-            ) : (
-              <p className="text-sm text-muted-foreground mt-3">No video demo provided. Use the screenshots and documentation for reference.</p>
-            )}
-          </div>
+          </aside>
         </div>
-      </div>
+
+        <div className="mt-20 pt-10 border-t hairline flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <p className="text-sm text-muted-foreground">
+            Want to discuss a similar system?
+          </p>
+          <Link
+            href="/#contact"
+            className="inline-flex items-center gap-2 px-5 py-3 bg-foreground text-background text-sm font-medium rounded-full hover:opacity-90 transition-opacity"
+          >
+            Get in touch
+            <ArrowUpRight size={14} />
+          </Link>
+        </div>
+      </article>
     </main>
   )
 }

@@ -1,64 +1,97 @@
 "use client"
 
-import { useState } from "react"
-import { ChevronDown } from "lucide-react"
+import Image from "next/image"
+import { motion } from "framer-motion"
 
-interface AboutItem {
-  title: string
-  content: string
-}
-
-const aboutItems: AboutItem[] = [
-  {
-    title: "Personal Motivation",
-    content:
-      `I’m excited by how AI automation merges creativity and engineering to eliminate inefficiency. I’m driven by the challenge of transforming manual or repetitive processes into self-running systems that save time, reduce errors, and create measurable value. Building automations that learn, adapt, and deliver consistent impact is what motivates me most.`,
-  },
-  {
-    title: "Problem-Solving Approach",
-    content:
-      `In a previous project, Airtable’s query limits made campaign domain-matching unreliable. I built a custom JavaScript logic for accurate matching, introduced caching and checkpoint recovery for stability, and optimized execution time by over 70%. I focus on designing solutions that are resilient, efficient, and scalable, not just functional.`,
-  },
-  {
-    title: "Career Goals",
-    content:
-      `In the next 2–3 years, I aim to advance as an AI Automation Architect, building robust, intelligent systems that merge data science, backend development, and LLM integration. I want to deepen my expertise in AI orchestration tools like n8n and LangChain, contribute to research, and lead projects that redefine productivity through intelligent automation.`,
-  },
+const facts = [
+  { label: "Languages", value: "TypeScript · Python · Rust · Java" },
+  { label: "Automation", value: "Make · n8n · Apify · LLM orchestration" },
+  { label: "Backend", value: "Node · APIs · OCR · ETL pipelines" },
+  { label: "Workflow", value: "OpenAI · LangChain · Airtable · Sheets" },
 ]
 
 export function AboutSection() {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(0)
-
   return (
-    <section id="about" className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-center">About Me</h2>
-        <p className="text-center text-muted-foreground mb-6 text-lg">
-          I’m Chukwudi Peter Ofoma, a full-stack developer and researcher specializing in AI-driven automation systems. I design intelligent workflows that connect APIs, LLMs, and backend logic to streamline complex tasks, enhance decision-making, and scale operations efficiently.
-        </p>
-        <p className="text-center text-muted-foreground mb-12 text-sm">{String.fromCharCode(0x2500).repeat(20)}</p>
+    <section id="about" className="px-6 lg:px-10 py-24 sm:py-32 bg-muted">
+      <div className="max-w-6xl mx-auto">
+        <header className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
+          <div className="lg:col-span-3">
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              §02 — About
+            </p>
+          </div>
+          <div className="lg:col-span-9">
+            <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.05]">
+              I&apos;m a full-stack engineer building <em className="italic">quiet,</em>{" "}
+              reliable AI systems — the kind people don&apos;t notice until they
+              stop working.
+            </h2>
+          </div>
+        </header>
 
-        <div className="space-y-4">
-          {aboutItems.map((item, index) => (
-            <div key={index} className="glass rounded-lg overflow-hidden transition-all duration-300">
-              <button
-                onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
-                className="w-full px-6 py-4 flex items-center justify-between hover:bg-primary/5 transition-colors"
-              >
-                <h3 className="text-lg font-semibold text-left">{item.title}</h3>
-                <ChevronDown
-                  size={20}
-                  className={`transition-transform duration-300 ${expandedIndex === index ? "rotate-180" : ""}`}
-                />
-              </button>
-
-              {expandedIndex === index && (
-                <div className="px-6 pb-4 border-t border-border/50 animate-fade-in-up">
-                  <p className="text-muted-foreground leading-relaxed">{item.content}</p>
-                </div>
-              )}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-4"
+          >
+            <div className="relative aspect-4/5 w-full max-w-sm overflow-hidden rounded-md border hairline bg-background">
+              <Image
+                src="/image/chudi.png"
+                alt="Chukwudi Peter Ofoma"
+                fill
+                sizes="(min-width: 1024px) 320px, 80vw"
+                className="object-cover"
+                priority={false}
+              />
             </div>
-          ))}
+            <p className="mt-4 font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">
+              Chukwudi Peter Ofoma
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="lg:col-span-8 space-y-6"
+          >
+            <p className="text-lg sm:text-xl leading-relaxed">
+              I design and ship automations that connect APIs, LLMs, and
+              backend logic into systems that run themselves. My work tends
+              to live where engineering, operations, and product meet — turning
+              brittle, manual processes into resilient pipelines.
+            </p>
+
+            <p className="text-base leading-relaxed text-muted-foreground">
+              I care about reliability, observability, and the small details
+              that decide whether a system survives its first month in
+              production. I&apos;ve led projects that cut execution time by
+              70%+, saved teams 20+ hours a week, and 3×&apos;d output
+              throughput — but the parts I&apos;m proudest of are the ones no
+              one ever has to think about.
+            </p>
+
+            <p className="text-base leading-relaxed text-muted-foreground">
+              Outside of building, I&apos;m researching AI orchestration with
+              tools like n8n and LangChain, and writing about what works (and
+              what doesn&apos;t) when LLMs meet production constraints.
+            </p>
+
+            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 pt-6 mt-6 border-t hairline">
+              {facts.map((f) => (
+                <div key={f.label}>
+                  <dt className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-1">
+                    {f.label}
+                  </dt>
+                  <dd className="text-sm">{f.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </motion.div>
         </div>
       </div>
     </section>

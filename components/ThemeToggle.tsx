@@ -22,7 +22,7 @@ export function ThemeToggle() {
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label={`Toggle theme, currently ${isDark ? "dark" : "light"}`}
       aria-pressed={isDark}
-      className="p-2 rounded-md hover:bg-primary/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:ring-primary"
+      className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-foreground"
       title="Toggle theme"
     >
       {isDark ? <Sun size={18} /> : <Moon size={18} />}

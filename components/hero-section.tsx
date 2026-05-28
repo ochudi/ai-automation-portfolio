@@ -1,116 +1,97 @@
-"use client";
+"use client"
 
-import { useEffect, useRef } from "react";
-import { ArrowRight } from "lucide-react";
-import { AnimatedPortrait } from "./AnimatedPortrait";
-import { motion } from "framer-motion";
+import { motion } from "framer-motion"
+import { ArrowUpRight } from "lucide-react"
 
 export function HeroSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current) return;
-      const { clientX, clientY } = e;
-      const { width, height, left, top } =
-        containerRef.current.getBoundingClientRect();
-      const x = (clientX - left) / width;
-      const y = (clientY - top) / height;
-
-      containerRef.current.style.setProperty("--mouse-x", `${x * 100}%`);
-      containerRef.current.style.setProperty("--mouse-y", `${y * 100}%`);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
   return (
     <section
-      id="home"
-      ref={containerRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16"
+      id="top"
+      className="relative min-h-screen flex flex-col justify-center px-6 lg:px-10 pt-32 pb-24"
     >
-      {/* Animated Background */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-72 h-72 bg-accent/20 rounded-full blur-3xl animate-pulse" />
-      </div>
+      <div className="max-w-6xl mx-auto w-full">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.18em] text-muted-foreground mb-10">
+            <span className="relative inline-flex w-1.5 h-1.5">
+              <span className="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-60" />
+              <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            </span>
+            Available for engagements · 2026
+          </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center lg:items-stretch">
-          <motion.div
-            className="text-center md:text-left animate-fade-in-up"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h1 className="text-4xl sm:text-5xl lg:text-[clamp(2.5rem,4.5vw,4rem)] font-bold mb-4 bg-linear-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-              Chudi Ofoma
-            </h1>
-            <p className="text-base sm:text-lg text-muted-foreground mb-6 max-w-[60ch] leading-relaxed mx-auto md:mx-0">
-              Hey there! I build AI-driven automations that cut down manual
-              work, prevent errors, and boost productivity... if you’re ready to
-              make your systems smarter — let’s automate your next project
-              together.
-            </p>
+          <h1 className="font-serif text-[clamp(3rem,9vw,8rem)] leading-[0.95] tracking-tight">
+            Chudi <em className="italic font-serif">Ofoma</em>
+          </h1>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mb-6">
-              <a
-                href="#projects"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 hover:scale-105"
-              >
-                View My Work
-                <ArrowRight size={18} />
-              </a>
-              <a
-                href="#contact"
-                className="inline-flex items-center justify-center px-6 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary/10 transition-all duration-300"
-              >
-                Get In Touch
-              </a>
-            </div>
-          </motion.div>
+          <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+            <div className="lg:col-span-7">
+              <p className="text-xl sm:text-2xl leading-snug text-foreground max-w-2xl">
+                I design and build{" "}
+                <span className="font-serif italic">AI automation systems</span>{" "}
+                that replace repetitive operational work — invoices, leads,
+                reports, content.
+              </p>
+              <p className="mt-5 text-base text-muted-foreground max-w-xl leading-relaxed">
+                Full-stack engineer working across LLMs, workflow orchestration,
+                and backend systems. Shipped automations that cut processing
+                time by 70%+ and saved teams 20+ hours a week.
+              </p>
 
-          <motion.div
-            className="flex justify-center md:justify-end items-center"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="flex items-center justify-center w-full">
-              {/* provide a container that constrains and centers the portrait on large screens */}
-              <div className="w-[clamp(12rem,28vw,24rem)] sm:w-[clamp(14rem,26vw,26rem)] md:w-[clamp(16rem,22vw,28rem)] lg:w-[clamp(18rem,20vw,32rem)]">
-                <AnimatedPortrait />
+              <div className="mt-10 flex flex-wrap gap-3">
+                <a
+                  href="#work"
+                  className="group inline-flex items-center gap-2 px-5 py-3 bg-foreground text-background text-sm font-medium rounded-full hover:opacity-90 transition-opacity"
+                >
+                  View selected work
+                  <ArrowUpRight
+                    size={16}
+                    className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  />
+                </a>
+                <a
+                  href="#contact"
+                  className="inline-flex items-center gap-2 px-5 py-3 border hairline text-sm font-medium rounded-full hover:bg-muted transition-colors"
+                >
+                  Get in touch
+                </a>
               </div>
             </div>
-          </motion.div>
-        </div>
 
-        {/* Scroll Indicator (click to scroll to next section - About) */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-          <button
-            aria-label="Scroll to About section"
-            onClick={() => {
-              const el = document.getElementById("about");
-              if (!el) return;
-              const prefersReduced =
-                window.matchMedia &&
-                window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-              if (prefersReduced) {
-                el.scrollIntoView();
-              } else {
-                el.scrollIntoView({ behavior: "smooth", block: "start" });
-              }
-            }}
-            className="animate-bounce focus:outline-none"
-          >
-            <div className="w-6 h-10 border-2 border-primary rounded-full flex items-start justify-center p-2">
-              <div className="w-1 h-2 bg-primary rounded-full animate-pulse" />
-            </div>
-          </button>
-        </div>
+            <aside className="lg:col-span-4 lg:col-start-9 lg:pt-3">
+              <dl className="grid grid-cols-2 lg:grid-cols-1 gap-y-6 gap-x-6 text-sm">
+                <div>
+                  <dt className="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground mb-1">
+                    Role
+                  </dt>
+                  <dd>AI Automation Engineer</dd>
+                </div>
+                <div>
+                  <dt className="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground mb-1">
+                    Based
+                  </dt>
+                  <dd>Lagos, Nigeria · Remote-friendly</dd>
+                </div>
+                <div>
+                  <dt className="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground mb-1">
+                    Focus
+                  </dt>
+                  <dd>LLM orchestration, backend systems, workflow automation</dd>
+                </div>
+                <div>
+                  <dt className="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground mb-1">
+                    Open to
+                  </dt>
+                  <dd>Full-time · Founding engineer · Contract</dd>
+                </div>
+              </dl>
+            </aside>
+          </div>
+        </motion.div>
       </div>
     </section>
-  );
+  )
 }

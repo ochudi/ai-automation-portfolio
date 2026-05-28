@@ -1,72 +1,76 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { motion } from "framer-motion"
 
-interface Skill {
-  name: string
-  category: string
+interface Group {
+  label: string
+  items: string[]
 }
 
-const skills: Skill[] = [
-  { name: "Make", category: "Automation" },
-  { name: "n8n", category: "Automation" },
-  { name: "Apify", category: "Automation" },
-  { name: "LLMs", category: "Automation" },
-
-  { name: "Pencil", category: "Software" },
-  { name: "Notion", category: "Software" },
-  { name: "Figma", category: "Software" },
-  { name: "Framer", category: "Software" },
-
-  { name: "Python", category: "Programming" },
-  { name: "TypeScript", category: "Programming" },
-  { name: "Rust", category: "Programming" },
-  { name: "Java", category: "Programming" },
+const groups: Group[] = [
+  {
+    label: "Automation",
+    items: ["Make", "n8n", "Apify", "LangChain", "OpenAI", "Telegram bots"],
+  },
+  {
+    label: "Languages",
+    items: ["TypeScript", "Python", "Rust", "Java", "SQL"],
+  },
+  {
+    label: "Backend",
+    items: ["Node.js", "REST / Webhooks", "OCR", "ETL", "PDF.co", "Sheets API"],
+  },
+  {
+    label: "Data & Storage",
+    items: ["Airtable", "PostgreSQL", "Notion", "Google Workspace"],
+  },
+  {
+    label: "Design & Product",
+    items: ["Figma", "Framer", "Notion", "Pencil"],
+  },
 ]
 
-const categories = ["Automation", "Software", "Programming"]
-
 export function SkillsSection() {
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const items = container.querySelectorAll(".skill-item")
-      items.forEach((item) => {
-        const rect = item.getBoundingClientRect()
-        const x = e.clientX - rect.left
-        const y = e.clientY - rect.top
-
-        const element = item as HTMLElement
-        element.style.setProperty("--mouse-x", `${x}px`)
-        element.style.setProperty("--mouse-y", `${y}px`)
-      })
-    }
-
-    container.addEventListener("mousemove", handleMouseMove)
-    return () => container.removeEventListener("mousemove", handleMouseMove)
-  }, [])
-
   return (
-    <section id="skills" className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+    <section id="stack" className="px-6 lg:px-10 py-24 sm:py-32">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-center">Skills & Expertise</h2>
-        <p className="text-center text-muted-foreground mb-16 text-lg">
-          Technologies and tools I use to build intelligent automation solutions
-        </p>
+        <header className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
+          <div className="lg:col-span-3">
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              §03 — Stack
+            </p>
+          </div>
+          <div className="lg:col-span-9">
+            <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.05]">
+              The tools I reach for when shipping{" "}
+              <em className="italic">production</em> automations.
+            </h2>
+          </div>
+        </header>
 
-        <div ref={containerRef} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {skills.map((skill, index) => (
-            <div
-              key={index}
-              className="skill-item glass rounded-lg p-4 text-center hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-110 cursor-pointer group"
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-12">
+          {groups.map((g, i) => (
+            <motion.div
+              key={g.label}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.45, delay: i * 0.05 }}
             >
-              <p className="font-semibold text-foreground group-hover:text-primary transition-colors">{skill.name}</p>
-              <p className="text-xs text-muted-foreground mt-1">{skill.category}</p>
-            </div>
+              <h3 className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground pb-3 border-b hairline mb-4">
+                {g.label}
+              </h3>
+              <ul className="space-y-1.5">
+                {g.items.map((item) => (
+                  <li
+                    key={item}
+                    className="text-base sm:text-lg tracking-tight"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
           ))}
         </div>
       </div>

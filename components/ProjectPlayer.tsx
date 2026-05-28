@@ -1,38 +1,36 @@
 "use client"
 
 import { useState } from "react"
+import { Play } from "lucide-react"
 
 export function ProjectPlayer({ src, title }: { src: string; title: string }) {
   const [mounted, setMounted] = useState(false)
 
   if (!src) return null
 
-  const isVideoFile = (s: string) => /\.(mp4|webm|ogg|mov)(\?|$)/i.test(s) || s.startsWith("/")
+  const isVideoFile = (s: string) =>
+    /\.(mp4|webm|ogg|mov)(\?|$)/i.test(s) || s.startsWith("/")
 
   return (
-    <div className="w-full rounded overflow-hidden shadow-lg">
+    <div className="w-full rounded-md overflow-hidden border hairline bg-muted">
       {!mounted ? (
-        <div className="p-6 flex flex-col items-center gap-4">
-          <div className="text-center">
-            <p className="font-semibold">Video demo available</p>
-            <p className="text-sm text-muted-foreground">Click to load the video (lazy)</p>
+        <button
+          type="button"
+          onClick={() => setMounted(true)}
+          aria-label={`Load video for ${title}`}
+          className="w-full aspect-video flex flex-col items-center justify-center gap-3 hover:bg-muted/70 transition-colors"
+        >
+          <div className="w-12 h-12 rounded-full border hairline flex items-center justify-center">
+            <Play size={18} />
           </div>
-          <button
-            onClick={() => setMounted(true)}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-md"
-            aria-label={`Load video for ${title}`}
-          >
-            Load Video
-          </button>
-        </div>
+          <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            Load demo
+          </span>
+        </button>
       ) : (
         <div className="aspect-video w-full">
           {isVideoFile(src) ? (
-            <video
-              src={src}
-              controls
-              className="w-full h-full bg-black"
-            />
+            <video src={src} controls className="w-full h-full bg-black" />
           ) : (
             <iframe
               src={src}

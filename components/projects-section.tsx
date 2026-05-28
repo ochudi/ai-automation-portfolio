@@ -1,63 +1,88 @@
 "use client"
 
 import Link from "next/link"
-import { ExternalLink, Play } from "lucide-react"
-
+import { motion } from "framer-motion"
+import { ArrowUpRight } from "lucide-react"
 import { projects } from "@/lib/projects"
 
 export function ProjectsSection() {
   return (
-    <section id="projects" className="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="work" className="px-6 lg:px-10 py-24 sm:py-32">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-center">Featured Projects</h2>
-        <p className="text-center text-muted-foreground mb-16 text-lg">
-          Showcasing automation solutions that drive real business impact
-        </p>
+        <header className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16 lg:mb-24">
+          <div className="lg:col-span-3">
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              §01 — Selected Work
+            </p>
+          </div>
+          <div className="lg:col-span-9">
+            <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.05]">
+              A small set of systems I&apos;ve shipped — each replacing manual
+              operational work with something{" "}
+              <em className="italic">self-running</em>.
+            </h2>
+          </div>
+        </header>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {projects.map((project) => (
-            <Link
+        <ol className="divide-y hairline border-t hairline">
+          {projects.map((project, i) => (
+            <motion.li
               key={project.slug}
-              href={`/projects/${project.slug}`}
-              aria-label={`Open project ${project.title}`}
-              className="block"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.5, delay: i * 0.05 }}
             >
-              <div className="glass rounded-lg p-6 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:scale-105 group">
-                <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">{project.title}</h3>
+              <Link
+                href={`/projects/${project.slug}`}
+                className="group grid grid-cols-12 gap-4 sm:gap-6 py-8 sm:py-10 items-baseline transition-colors hover:bg-muted/40 -mx-3 px-3 rounded-md"
+              >
+                <div className="col-span-12 sm:col-span-1 font-mono text-sm text-muted-foreground tabular-nums">
+                  {String(i + 1).padStart(2, "0")}
+                </div>
 
-                <p className="text-muted-foreground mb-4 leading-relaxed">{project.description}</p>
+                <div className="col-span-12 sm:col-span-5">
+                  <h3 className="font-serif text-2xl sm:text-3xl leading-tight tracking-tight group-hover:text-accent transition-colors">
+                    {project.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-muted-foreground max-w-md leading-relaxed">
+                    {project.outcome}
+                  </p>
+                </div>
 
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {project.tools.map((tool) => (
-                    <span key={tool} className="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">
-                      {tool}
+                <div className="col-span-7 sm:col-span-3">
+                  {project.metric ? (
+                    <p className="font-serif italic text-xl sm:text-2xl">
+                      {project.metric}
+                    </p>
+                  ) : (
+                    <p className="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                      Case study
+                    </p>
+                  )}
+                </div>
+
+                <div className="col-span-4 sm:col-span-2 flex flex-wrap gap-1.5 justify-start sm:justify-start">
+                  {project.tools.slice(0, 3).map((t) => (
+                    <span
+                      key={t}
+                      className="font-mono text-[10px] uppercase tracking-wider px-2 py-1 border hairline rounded-full text-muted-foreground"
+                    >
+                      {t}
                     </span>
                   ))}
                 </div>
 
-                <div className="flex gap-3">
-                  <span className="inline-flex items-center gap-2 text-primary transition-colors font-semibold">
-                    Learn More
-                    <ExternalLink size={16} />
-                  </span>
-                  {project.video && (
-                    <a
-                      href={project.video}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                      onClick={(e) => e.stopPropagation()}
-                      aria-label={`Open video demo for ${project.title}`}
-                      className="inline-flex items-center gap-2 text-secondary hover:text-accent transition-colors font-semibold"
-                    >
-                      <Play size={16} />
-                      Video
-                    </a>
-                  )}
+                <div className="col-span-1 flex justify-end">
+                  <ArrowUpRight
+                    size={20}
+                    className="text-muted-foreground transition-all group-hover:text-foreground group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  />
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </motion.li>
           ))}
-        </div>
+        </ol>
       </div>
     </section>
   )

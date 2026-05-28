@@ -1,140 +1,168 @@
 "use client"
 
-import { useState } from "react"
-import { Github, Linkedin, Mail } from "lucide-react"
+import { useRef, useState } from "react"
 import { motion } from "framer-motion"
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogClose,
-} from "./ui/dialog"
-import { Button } from "./ui/button"
+import { ArrowUpRight } from "lucide-react"
+
+const links = [
+  { label: "Email", href: "mailto:ofoma.chudi@gmail.com", value: "ofoma.chudi@gmail.com", isEmail: true },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/ochudi/", value: "in/ochudi" },
+  { label: "GitHub", href: "https://github.com/ochudi", value: "@ochudi" },
+  { label: "X", href: "https://x.com/mrofoma", value: "@mrofoma" },
+]
 
 export function ContactSection() {
-  const [open, setOpen] = useState(false)
+  const dialogRef = useRef<HTMLDialogElement>(null)
   const [subject, setSubject] = useState("Inquiry from website")
   const [message, setMessage] = useState(
     "Hi Chudi,\n\nI'd like to discuss a project opportunity. Please let me know a good time to connect.\n\nThanks,"
   )
 
+  function openDialog(e: React.MouseEvent) {
+    e.preventDefault()
+    dialogRef.current?.showModal()
+  }
+
+  function closeDialog() {
+    dialogRef.current?.close()
+  }
+
   function handleConfirm() {
     const mailto = `mailto:ofoma.chudi@gmail.com?subject=${encodeURIComponent(
       subject
     )}&body=${encodeURIComponent(message)}`
-    // close dialog then open mail client
-    setOpen(false)
+    closeDialog()
     setTimeout(() => {
       window.location.href = mailto
     }, 160)
   }
 
   return (
-    <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-center">Research & Contact</h2>
-        <p className="text-center text-muted-foreground mb-8 text-lg max-w-2xl mx-auto">
-          If you'd like to explore my work or reach out, the links below provide direct access to my code,
-          professional profile, and email. I'm open to conversations about automation, product, and engineering.
+    <section id="contact" className="px-6 lg:px-10 py-24 sm:py-32 bg-muted">
+      <div className="max-w-6xl mx-auto">
+        <header className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
+          <div className="lg:col-span-3">
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              §04 — Contact
+            </p>
+          </div>
+          <div className="lg:col-span-9">
+            <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.05]">
+              If you&apos;re building something where automation is the{" "}
+              <em className="italic">edge</em> — let&apos;s talk.
+            </h2>
+          </div>
+        </header>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+          <motion.a
+            href="mailto:ofoma.chudi@gmail.com"
+            onClick={openDialog}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-8 group block"
+          >
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground mb-3">
+              Write to me
+            </p>
+            <div className="font-serif text-[clamp(2rem,6vw,4.5rem)] leading-none tracking-tight underline decoration-1 underline-offset-[0.18em] decoration-border group-hover:decoration-foreground transition-colors break-all">
+              ofoma.chudi
+              <span className="text-muted-foreground">@gmail.com</span>
+            </div>
+            <p className="mt-5 text-sm text-muted-foreground inline-flex items-center gap-1.5">
+              Click to compose
+              <ArrowUpRight size={14} />
+            </p>
+          </motion.a>
+
+          <motion.ul
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="lg:col-span-4 lg:border-l hairline lg:pl-10 space-y-5"
+          >
+            {links.slice(1).map((l) => (
+              <li key={l.label}>
+                <a
+                  href={l.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-baseline justify-between gap-4 py-1 border-b hairline"
+                >
+                  <span>
+                    <span className="block font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                      {l.label}
+                    </span>
+                    <span className="font-serif text-xl">{l.value}</span>
+                  </span>
+                  <ArrowUpRight
+                    size={16}
+                    className="text-muted-foreground transition-all group-hover:text-foreground group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  />
+                </a>
+              </li>
+            ))}
+
+            <li className="pt-4">
+              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                Response time
+              </p>
+              <p className="text-sm mt-1">Usually within 24 hours · GMT+1</p>
+            </li>
+          </motion.ul>
+        </div>
+      </div>
+
+      <dialog
+        ref={dialogRef}
+        className="rounded-md p-6 bg-background text-foreground backdrop:bg-black/60 max-w-md w-full m-auto border hairline shadow-xl"
+      >
+        <h3 className="font-serif text-2xl">Send an email</h3>
+        <p className="text-sm text-muted-foreground mt-1">
+          You&apos;ll be redirected to your mail client. Confirm to continue.
         </p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.36 }}
-          className="glass rounded-lg p-8"
-        >
-          <div className="grid sm:grid-cols-3 gap-6">
-            <a
-              href="https://github.com/ochudi"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Open GitHub profile"
-              className="group rounded-lg p-5 flex flex-col items-start gap-3 transition-all duration-300 transform bg-background/50 border border-border hover:scale-105 hover:shadow-lg hover:shadow-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            >
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-muted/10 text-foreground group-hover:text-primary transition-colors">
-                <Github />
-              </div>
-              <div>
-                <h3 className="font-semibold group-hover:text-primary transition-colors">GitHub</h3>
-                <p className="text-sm text-muted-foreground">Browse projects, code samples, and automation repos.</p>
-              </div>
-            </a>
+        <div className="mt-5 space-y-3">
+          <label className="block text-xs font-mono uppercase tracking-[0.16em] text-muted-foreground">
+            Subject
+          </label>
+          <input
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            className="w-full rounded-md border hairline px-3 py-2 bg-background focus:outline-none focus:border-foreground transition-colors"
+          />
 
-            <a
-              href="https://www.linkedin.com/in/ochudi/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Open LinkedIn profile"
-              className="group rounded-lg p-5 flex flex-col items-start gap-3 transition-all duration-300 transform bg-background/50 border border-border hover:scale-105 hover:shadow-lg hover:shadow-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            >
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-muted/10 text-foreground group-hover:text-primary transition-colors">
-                <Linkedin />
-              </div>
-              <div>
-                <h3 className="font-semibold group-hover:text-primary transition-colors">LinkedIn</h3>
-                <p className="text-sm text-muted-foreground">Professional profile, case studies, and recommendations.</p>
-              </div>
-            </a>
+          <label className="block text-xs font-mono uppercase tracking-[0.16em] text-muted-foreground">
+            Message
+          </label>
+          <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            rows={5}
+            className="w-full rounded-md border hairline px-3 py-2 bg-background focus:outline-none focus:border-foreground transition-colors"
+          />
+        </div>
 
-            {/* Email opens a themed confirmation modal instead of default alert */}
-            <Dialog open={open} onOpenChange={setOpen}>
-              <DialogTrigger asChild>
-                <a
-                  href="#"
-                  aria-label="Send email to Chudi"
-                  className="group rounded-lg p-5 flex flex-col items-start gap-3 transition-all duration-300 transform bg-background/50 border border-border hover:scale-105 hover:shadow-lg hover:shadow-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                >
-                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-muted/10 text-foreground group-hover:text-primary transition-colors">
-                    <Mail />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold group-hover:text-primary transition-colors">Email</h3>
-                    <p className="text-sm text-muted-foreground">ofoma.chudi@gmail.com — for direct enquiries and collaborations.</p>
-                  </div>
-                </a>
-              </DialogTrigger>
-
-              <DialogContent>
-                <DialogTitle>Send an email</DialogTitle>
-                <DialogDescription>
-                  You'll be redirected to your mail client to finish and send the message. Confirm to continue.
-                </DialogDescription>
-
-                <div className="mt-4 space-y-3">
-                  <label className="block text-sm font-medium">Subject</label>
-                  <input
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
-                    className="w-full rounded-md border px-3 py-2 bg-background"
-                  />
-
-                  <label className="block text-sm font-medium">Message</label>
-                  <textarea
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    rows={5}
-                    className="w-full rounded-md border px-3 py-2 bg-background"
-                  />
-                </div>
-
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DialogClose>
-                  <Button onClick={handleConfirm}>Confirm & Open Mail</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
-
-          <p className="mt-6 text-sm text-muted-foreground">I prefer initial conversations over email or LinkedIn messages. For technical deep-dives, GitHub
-          contains code samples and documentation.</p>
-        </motion.div>
-      </div>
+        <div className="mt-6 flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={closeDialog}
+            className="px-4 py-2 text-sm rounded-full border hairline hover:bg-muted transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleConfirm}
+            className="px-4 py-2 text-sm rounded-full bg-foreground text-background hover:opacity-90 transition-opacity"
+          >
+            Open mail client
+          </button>
+        </div>
+      </dialog>
     </section>
   )
 }
